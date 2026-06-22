@@ -6,14 +6,14 @@ output [23:0] instruction_out
 reg [23:0] imemory [0:NOMU-1];
 //FORMAT:- OPCODE=5, FUNC = 4, REGS = 5, IMM = 1+8, 
 initial begin
-imemory[0] =24'b011000000000001000101000;           //RTYPE - ADD
-imemory[1] =24'b011000000000001000111001;           //RTYPE - SUBTRACT
-imemory[2] =24'b011000000000001001001010;           //RTYPE - MULTIPLY
-imemory[3] =24'b011000000000001001011011;           //RTYPE - DIVIDE
-imemory[4] =24'b011000000000001001101100;           //RTYPE - AND
-imemory[5] =24'b011000000000001001111101;           //RTYPE - OR
-imemory[6] =24'b011000000000001010001110;           //RTYPE - NOT
-imemory[7] =24'b011000000000001010011111;           //RTYPE - XOR
+imemory[0] =24'b011000000000001000100000;           //RTYPE - ADD
+imemory[1] =24'b011000000000001000110001;           //RTYPE - SUBTRACT
+imemory[2] =24'b011000000000001001000010;           //RTYPE - MULTIPLY
+imemory[3] =24'b011000000000001001010011;           //RTYPE - DIVIDE
+imemory[4] =24'b011000000000001001100100;           //RTYPE - AND
+imemory[5] =24'b011000000000001001110101;           //RTYPE - OR
+imemory[6] =24'b011000000000001010000110;           //RTYPE - NOT
+imemory[7] =24'b011000000000001010010111;           //RTYPE - XOR
 imemory[8] =24'b000010101001011000000011;           //LOADI - reg no 10 is rs, contains data mem wala address, reg 11 is dest reg, offset to load = 3
 imemory[9] =24'b000100110001101000000101;           //LOAD - reg no 12 is rs, contains actual data mem address , reg no 13 is rt, OFFSET for mem = 5
 imemory[10] =24'b000110111001111000000100;          //STORE - offset = 4
@@ -31,8 +31,9 @@ assign instruction_out = imemory[PC_address];
 integer k;
 initial begin
   for (k = 18; k < NOMU; k = k + 1) begin  
-    imemory[k] <= 24'b0;                 
+    imemory[k] = 24'b0;                 
   end
 end
 
 endmodule
+
