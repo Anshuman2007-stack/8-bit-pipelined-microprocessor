@@ -46,14 +46,14 @@ output [23:0] instruction_out
 reg [23:0] imemory [0:NOMU-1];
 //FORMAT:- OPCODE=5, FUNC = 4, REGS = 5, IMM = 1+8, 
 initial begin
-imemory[0] =24'b011000000000001000101000;           //RTYPE - ADD
-imemory[1] =24'b011000000000001000111001;           //RTYPE - SUBTRACT
-imemory[2] =24'b011000000000001001001010;           //RTYPE - MULTIPLY
-imemory[3] =24'b011000000000001001011011;           //RTYPE - DIVIDE
-imemory[4] =24'b011000000000001001101100;           //RTYPE - AND
-imemory[5] =24'b011000000000001001111101;           //RTYPE - OR
-imemory[6] =24'b011000000000001010001110;           //RTYPE - NOT
-imemory[7] =24'b011000000000001010011111;           //RTYPE - XOR
+imemory[0] =24'b011000000000001000100000;           //RTYPE - ADD
+imemory[1] =24'b011000000000001000110001;           //RTYPE - SUBTRACT
+imemory[2] =24'b011000000000001001000010;           //RTYPE - MULTIPLY
+imemory[3] =24'b011000000000001001010011;           //RTYPE - DIVIDE
+imemory[4] =24'b011000000000001001100100;           //RTYPE - AND
+imemory[5] =24'b011000000000001001110101;           //RTYPE - OR
+imemory[6] =24'b011000000000001010000110;           //RTYPE - NOT
+imemory[7] =24'b011000000000001010010111;           //RTYPE - XOR
 imemory[8] =24'b000010101001011000000011;           //LOADI - reg no 10 is rs, contains data mem wala address, reg 11 is dest reg, offset to load = 3
 imemory[9] =24'b000100110001101000000101;           //LOAD - reg no 12 is rs, contains actual data mem address , reg no 13 is rt, OFFSET for mem = 5
 imemory[10] =24'b000110111001111000000100;          //STORE - offset = 4
@@ -71,14 +71,13 @@ assign instruction_out = imemory[PC_address];
 integer k;
 initial begin
   for (k = 18; k < NOMU; k = k + 1) begin  
-    imemory[k] <= 24'b0;                 
+    imemory[k] = 24'b0;                 
   end
 end
 
 endmodule
 
 module instruction_decoder (
-    input clk,
     input [23:0] instruction,
     output reg [4:0] opcode,
     output reg [3:0] func,
@@ -196,8 +195,8 @@ always @(*) begin
         OR: Out = SrcA | SrcB;
         NOT: Out = ~SrcA;
         XOR: Out = SrcA ^ SrcB;
-        Right_Shift: Out = $signed(SrcA) >>> 1;
-        Left_Shift: Out = SrcA << 1;
+        Right_Shift: Out = $signed(SrcA) >>> SrcB;
+        Left_Shift: Out = SrcA << SrcB;
         SLT:begin Out = (SrcA + (~SrcB + 8'b1));
         Overflow = (SrcA[7] != SrcB[7]) && (Out[7] != SrcA[7]) ? 1'b1 : 1'b0;
         Out = {7'b0, (Out[7] ^ Overflow)};//XOR with overflow to preserve logic for opposite sign comparisons
@@ -424,7 +423,7 @@ assign out = sel? inA:inB;
 endmodule
 
 module MCPModule(
-input clk, rst1,rst2,rst3,
+input clk, rst1,  //rst2,rst3,
 output [7:0] result
 );
   
@@ -438,7 +437,7 @@ wire [7:0] Read_data1,Read_data2;//REGISTERFILE
 wire [4:0] opcode_wire;
 wire [3:0] function_code_wire;
 wire Zero_wire ,Overflow_wire;
-wire PCSrc_wire;               //left are PCSrc, ALUSrc, ResultSrc because they drive the MUXes
+wire PCSrc_wire;               
 wire [7:0] SrcB;
 wire [3:0] alu_control_wire;                   
 wire MemWrite_wire, MemRead_wire;
@@ -452,12 +451,12 @@ wire [7:0] PC_Plus_1_wire,BranchTarget_wire;
 assign result=Out_wire;
 
 PC counter (.clk(clk), .reset(rst1), .next_pc(next_pc), .pc(PC_address));
-Instruction_Memory im (.reset(rst2), .PC_address(PC_address), .instruction_out(instruction_out));
-instruction_decoder id (.clk(clk), .instruction(instruction_out), .opcode(opcode_wire), .func(function_code_wire), .rs(Rs1), .rt(Rs2), .rd(Rd), .immediate(immediate_wire));
-Register_file rg (.clk(clk), .reset(rst2), .RegWrite(RegWrite_wire), .Rs1(Rs1), .Rs2(Rs2), .Rd(Rd), .WriteData(WriteData), .Read_data1(Read_data1), .Read_data2(Read_data2));
+Instruction_Memory im (.reset(rst1), .PC_address(PC_address), .instruction_out(instruction_out));
+instruction_decoder id (.instruction(instruction_out), .opcode(opcode_wire), .func(function_code_wire), .rs(Rs1), .rt(Rs2), .rd(Rd), .immediate(immediate_wire));
+Register_file rg (.clk(clk), .reset(rst1), .RegWrite(RegWrite_wire), .Rs1(Rs1), .Rs2(Rs2), .Rd(Rd), .WriteData(WriteData), .Read_data1(Read_data1), .Read_data2(Read_data2));
 Control_Unit cu (.opcode(opcode_wire), .func(function_code_wire), .Zero(Zero_wire), .Overflow(Overflow_wire), .RegWrite(RegWrite_wire), .ALUSrc(ALUSrc_wire), .MemWrite(MemWrite_wire), .MemRead(MemRead_wire), .alu_control(alu_control_wire), .ResultSrc(ResultSrc_wire), .PCSrc(PCSrc_wire) );
 alu ALU (.SrcA(Read_data1), .SrcB(SrcB), .alu_control(alu_control_wire), .Out(Out_wire), .Zero(Zero_wire), .Overflow(Overflow_wire));
-Data_Memory dm (.clk(clk), .reset(rst3), .MemWrite(MemWrite_wire), .MemRead(MemRead_wire), .address(Out_wire), .write_data(Read_data2), .read_data(read_data));
+Data_Memory dm (.clk(clk), .reset(rst1), .MemWrite(MemWrite_wire), .MemRead(MemRead_wire), .address(Out_wire), .write_data(Read_data2), .read_data(read_data));
 PC_Adder pc_a(.PC(PC_address),.PC_Plus1(PC_Plus_1_wire));
 Branch_Adder ba(.PC(PC_address),.Immediate(immediate_wire),.BranchTarget(BranchTarget_wire));
 MUX_2_1 MemtoReg_mux (.inA(read_data), .inB(Out_wire), .sel(ResultSrc_wire), .out(WriteData));
