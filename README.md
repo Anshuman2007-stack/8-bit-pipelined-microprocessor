@@ -298,7 +298,11 @@ SLT           R13, R21, R30         # Set less than
 
 ## Contributors
 
-This project was built as part of **IITISOC-2026** (IIT Indore Summer of Code).
+This project was built as part of **IITISOC-2026** (IIT Indore Summer of Code).The team consists of the following members:
+1)Anshuman Nema-250002015
+2)Nilesh Kalra-250002044
+3)Tanuj Malay Jog-25002075
+4)Abhinav Shailesh Chavan-250002006
 
 ---
 
