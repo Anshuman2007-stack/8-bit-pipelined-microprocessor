@@ -1,5 +1,4 @@
 module instruction_decoder (
-    input clk,
     input [23:0] instruction,
     output reg [4:0] opcode,
     output reg [3:0] func,
