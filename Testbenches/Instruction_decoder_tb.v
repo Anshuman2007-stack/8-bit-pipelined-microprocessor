@@ -2,7 +2,6 @@
 
 module instruction_decoder_tb;
 
-reg clk;
 reg [23:0] instruction;
 
 wire [4:0] opcode;
@@ -13,7 +12,6 @@ wire [4:0] rd;
 wire [7:0] immediate;
 
 instruction_decoder DUT (
-    .clk(clk),
     .instruction(instruction),
     .opcode(opcode),
     .func(func),
