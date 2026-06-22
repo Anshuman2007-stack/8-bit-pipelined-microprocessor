@@ -39,8 +39,8 @@ always @(*) begin
         OR: Out = SrcA | SrcB;
         NOT: Out = ~SrcA;
         XOR: Out = SrcA ^ SrcB;
-        Right_Shift: Out = $signed(SrcA) >>> 1;
-        Left_Shift: Out = SrcA << 1;
+        Right_Shift: Out = $signed(SrcA) >>> SrcB;
+        Left_Shift: Out = SrcA << SrcB;
         SLT:begin Out = (SrcA + (~SrcB + 8'b1));
         Overflow = (SrcA[7] != SrcB[7]) && (Out[7] != SrcA[7]) ? 1'b1 : 1'b0;
         Out = {7'b0, (Out[7] ^ Overflow)};//XOR with overflow to preserve logic for opposite sign comparisons
@@ -51,3 +51,4 @@ always @(*) begin
     Zero = (Out == 0) ? 1'b1 : 1'b0;
 end
 endmodule
+
