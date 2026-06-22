@@ -1,85 +1,63 @@
 `timescale 1ns / 1ps
 
 /*
- * =====================================================================
- * Testbench: Single-Cycle Processor (tb_MCPModule)
- * 
- * Hey! This testbench verifies our custom single-cycle processor by 
- * running a classic Bubble Sort on it. 
- * 
- * Basically, we load up 3 unsorted numbers (5, 8, 2) into the data 
+ * Testbench: Single-Cycle Processor 
+ *Basically, we load up 3 unsorted numbers (5, 8, 2) into the data 
  * memory right at the start. Then, we feed the instruction memory with 
- * the machine code. The testbench waits until the program counter hits 
- * the HALT instruction, then prints out the memory to make sure it sorted!
+ * the machine code. 
  *
  * The C code logic we're mimicking is a standard double-loop array sort:
- * 
- * int arr[3] = {5, 8, 2};
+ * * int arr[3] = {5, 8, 2};
  * int n = 3;
  * for(int i=0; i<n; i++) {
- *     for(int j=i; j<n; j++) {
- *         if(arr[i] > arr[j]) {
- *             // Swap them
- *             int temp = arr[j];
- *             arr[j] = arr[i];
- *             arr[i] = temp;
- *         }
- *     }
+ * for(int j=i; j<n; j++) {
+ * if(arr[i] > arr[j]) {
+ * // Swap them
+ * int temp = arr[j];
+ * arr[j] = arr[i];
+ * arr[i] = temp;
  * }
- * 
- * And here is the rough assembly breakdown of what those 24-bit hex codes 
+ * }
+ * }
+ * * And here is the rough assembly breakdown of what those 24-bit hex codes 
  * are actually doing under the hood:
- * 
  * // --- Initialization ---
  * LI R3, 3          ; R3 = n = 3 (Array size)
  * LI R1, 0          ; R1 = i = 0 (Outer loop counter starts at 0)
- * 
- * OUTER_LOOP: 
+ * * OUTER_LOOP: 
  * CMP R1, R3        ; Are we done with the outer loop? (i vs n)
  * BGE EXIT          ; If i >= n, bail out.
  * MOV R2, R1        ; R2 = j = i (Inner loop counter starts at i)
- * 
- * INNER_LOOP: 
+ * * INNER_LOOP: 
  * CMP R2, R3        ; Are we done with the inner loop? (j vs n)
  * BGE END_INNER     ; If j >= n, break out of the inner loop.
- * 
- * // --- Memory Fetch ---
+ * * // --- Memory Fetch ---
  * LOAD R4, [R1]     ; R4 = arr[i]
  * LOAD R5, [R2]     ; R5 = arr[j]
- * 
- * // --- Compare & Swap ---
+ * * // --- Compare & Swap ---
  * CMP R4, R5        ; Is arr[i] > arr[j]?
  * BLE SKIP_SWAP     ; Nope, they are in the right order. Skip the swap!
  * STORE R5, [R1]    ; Swap part 1: arr[i] gets the value of arr[j]
  * STORE R4, [R2]    ; Swap part 2: arr[j] gets the old value of arr[i]
- * 
- * SKIP_SWAP:  
+ * * SKIP_SWAP:  
  * ADD R2, 1         ; j++
  * JMP INNER_LOOP    ; Back to the top of the inner loop
- * 
- * END_INNER:
+ * * END_INNER:
  * ADD R1, 1         ; i++
  * JMP OUTER_LOOP    ; Back to the top of the outer loop
- * 
- * EXIT:  
- * HALT              ; All done! Processor can chill now.
- * =====================================================================
+ * * EXIT:  
  */
 
 module tb_MCPModule();
 
     reg clk;
     reg rst1; 
-    reg rst2; 
-    reg rst3; 
 
     wire [7:0] result;
 
     MCPModule uut (
         .clk(clk), 
         .rst1(rst1), 
-        .rst2(rst2), 
-        .rst3(rst3), 
         .result(result)
     );
 
@@ -89,14 +67,10 @@ module tb_MCPModule();
         // Fire up the clock and hold resets high initially
         clk = 0;
         rst1 = 1;
-        rst2 = 1;
-        rst3 = 1;
 
         #100;
         // Drop resets to let the processor start running
         rst1 = 0;
-        rst2 = 0;
-        rst3 = 0;
 
         // Load our unsorted array into data memory
         uut.dm.dmemory[0] = 8'd5;
@@ -127,13 +101,9 @@ module tb_MCPModule();
         
         uut.im.imemory[15] = 24'h604E10; 
         uut.im.imemory[16] = 24'h2000F4; 
-        
-        uut.im.imemory[17] = 24'h200000; 
 
-        // Let the simulation run until we hit the HALT instruction at PC 17
-        wait(uut.PC_address == 8'd17);
-        
-        #10; 
+        // Let the simulation run for enough time to finish the sorting loops
+        #500; 
         
         // Print the results to the console!
         $display("========================================");
