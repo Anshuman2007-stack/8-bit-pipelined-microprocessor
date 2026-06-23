@@ -20,6 +20,7 @@ parameter Left_Shift        = 4'b0010;
 parameter SLT               = 4'b0101;
 parameter LSR               = 4'b0011;
 parameter ROR               = 4'b0100;
+parameter ROL               = 4'b0110;
 
 reg [2:0] shift_amt;
 
@@ -58,6 +59,15 @@ always @(*) begin
         else
         Out = ((SrcA >> shift_amt) | (SrcA << (8 - shift_amt)));
         end
+        ROL: begin
+       shift_amt = SrcB % 8;
+    
+        if (shift_amt == 0)
+        Out = SrcA;
+        else
+         Out = ((SrcA << shift_amt) | (SrcA >> (8 - shift_amt)));
+        end
+      
         default: Out = 8'b0;
     endcase
 
