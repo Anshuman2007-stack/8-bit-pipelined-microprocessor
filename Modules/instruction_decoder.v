@@ -21,6 +21,7 @@ parameter BEQ           =5'b01101;
 parameter BNE           =5'b01110;
 parameter LSR           =5'b01111;
 parameter ADDI          =5'b00101;
+parameter ROR           =5'b01010;
 
 always @(*) begin
     opcode    = instruction[23:19];
@@ -46,7 +47,7 @@ always @(*) begin
         JUMP: begin
             immediate = instruction[7:0];
         end
-        LEFT_SHIFT, RIGHT_SHIFT,LSR: begin
+        LEFT_SHIFT, RIGHT_SHIFT,LSR,ROR: begin
             rs = instruction[18:14];
             rt = instruction[13:9];
             rd = instruction[8:4];
