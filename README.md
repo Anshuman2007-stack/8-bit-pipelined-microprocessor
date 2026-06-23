@@ -275,23 +275,24 @@ The assembler supports all ISA instructions with their mnemonic syntax and handl
 The instruction memory in `single_cycle.v` is pre-loaded with a test program that exercises the full ISA:
 
 ```
-RTYPE ADD     R1,  R1,  R4          # ADD
-RTYPE SUB     R1,  R1,  R6          # SUBTRACT
-RTYPE MUL     R1,  R1,  R8          # MULTIPLY
-RTYPE DIV     R1,  R1,  R10         # DIVIDE
-RTYPE AND     R1,  R1,  R12         # AND
-RTYPE OR      R1,  R1,  R14         # OR
-RTYPE NOT     R1,  R1,  R16         # NOT
-RTYPE XOR     R1,  R1,  R18         # XOR
-LOADI         R10, R11, #3          # Load immediate (offset 3)
-LOAD          R12, R13, #5          # Load from mem[R12 + 5]
-STORE         R14, R15, #4          # Store to mem[R14 + 4]
-JUMP          #3                    # PC = PC + 3
-LSHIFT        R16, R17, R18         # Left shift
-RSHIFT        R19, R20, R21         # Arithmetic right shift
-BEQ           R26, R27, #2          # Branch if equal (offset 2)
-BNE           R27, R28, #2          # Branch if not equal
-SLT           R13, R21, R30         # Set less than
+ADD     R0 R1 R2         # ADD
+SUB     R0 R1 R3         # SUBTRACT
+MUL     R0 R1 R4         # MULTIPLY
+DIV     R0 R1 R5         # DIVIDE
+AND     R0 R1 R6         # AND
+OR      R0 R1 R7         # OR
+NOT     R0 R1 R8         # NOT
+XOR     R0 R1 R9         # XOR
+LOADI   R10, 3          # Load immediate (value to load = 3)
+LOAD    R12, R13, 5          # Load from mem[R12 + 5]
+STORE   R14, R15, #4          # Store to mem[R14 + 4]
+JUMP    3                    # PC = PC + 3
+LSH     R16, R17, R18         # Left shift (rs,rt,rd)
+RSH     R19, R20, R21         # Arithmetic right shift (rs,rt,rd)
+SLT     R22, R23, R24         # Set less than
+BEQ     R25, R26, 2          # Branch if equal (offset 2)
+BNE     R27, R28, 2          # Branch if not equal
+
 ```
 
 ---
@@ -301,7 +302,7 @@ SLT           R13, R21, R30         # Set less than
 This project was built as part of **IITISOC-2026** (IIT Indore Summer of Code).The team consists of the following members:
 1)Anshuman Nema-250002015
 2)Nilesh Kalra-250002044
-3)Tanuj Malay Jog-25002075
+3)Tanuj Malay Jog-250002075
 4)Abhinav Shailesh Chavan-250002006
 
 ---
