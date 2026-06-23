@@ -6,7 +6,7 @@ output [23:0] instruction_out
 reg [23:0] imemory [0:NOMU-1];
 //FORMAT:- OPCODE=5, FUNC = 4, REGS = 5, IMM = 1+8, ;
 initial begin
-imemory[0] =24'b011000000000001000100000;           //RTYPE - ADD
+imemory[0] =24'b011000000000001000100000;           //RTYPE - ADD 
 imemory[1] =24'b011000000000001000110001;           //RTYPE - SUBTRACT
 imemory[2] =24'b011000000000001001000010;           //RTYPE - MULTIPLY
 imemory[3] =24'b011000000000001001010011;           //RTYPE - DIVIDE
@@ -25,11 +25,12 @@ imemory[15] =24'b010011011010111110000101;          //SLT
 imemory[16] =24'b011011100111010000000010;          //BEQ- offset = 2
 imemory[17] =24'b011101101111100000000010;          //BNE- offset = 2
 imemory[18] =24'b011111110111110111110000;        //LSR
+imemory[19] =24'b001010010100110000000011;          //ADDI r6,r5,3
 end
 
 integer k;
 initial begin
-  for (k = 19; k < NOMU; k = k + 1) begin  
+  for (k = 20; k < NOMU; k = k + 1) begin  
     imemory[k] <= 24'b0;                 
   end
 end
