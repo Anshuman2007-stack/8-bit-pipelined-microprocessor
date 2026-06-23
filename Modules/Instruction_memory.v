@@ -27,11 +27,12 @@ imemory[17] =24'b011101101111100000000010;          //BNE- offset = 2
 imemory[18] =24'b011111110111110111110000;        //LSR
 imemory[19] =24'b001010010100110000000011;          //ADDI r6,r5,3
 imemory[20] =24'b010101110111110111110000;         // ROR
+imemory[21] =24'b010111110111110111110000;         // ROL r31,r29,r30
 end
 
 integer k;
 initial begin
-  for (k = 21; k < NOMU; k = k + 1) begin  
+  for (k = 22; k < NOMU; k = k + 1) begin  
     imemory[k] <= 24'b0;                 
   end
 end
