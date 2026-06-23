@@ -292,7 +292,7 @@ RSH     R19, R20, R21         # Arithmetic right shift (rs,rt,rd)
 SLT     R22, R23, R24         # Set less than
 BEQ     R25, R26, 2          # Branch if equal (offset 2)
 BNE     R27, R28, 2          # Branch if not equal
-
+BOV     R29, R30, 4          #Branch Overflow
 ```
 
 ---
