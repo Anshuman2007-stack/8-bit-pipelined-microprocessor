@@ -26,14 +26,16 @@ imemory[16] =24'b011011100111010000000010;          //BEQ- offset = 2
 imemory[17] =24'b011101101111100000000010;          //BNE- offset = 2
 end
 
-assign instruction_out = imemory[PC_address];
-
 integer k;
 initial begin
   for (k = 18; k < NOMU; k = k + 1) begin  
     imemory[k] <= 24'b0;                 
   end
 end
+  
+assign instruction_out = imemory[PC_address];
+
+
 
 endmodule
 
