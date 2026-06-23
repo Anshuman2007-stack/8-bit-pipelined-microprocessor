@@ -4,7 +4,7 @@ input [7:0] PC_address,
 output [23:0] instruction_out
 );
 reg [23:0] imemory [0:NOMU-1];
-//FORMAT:- OPCODE=5, FUNC = 4, REGS = 5, IMM = 1+8, 
+//FORMAT:- OPCODE=5, FUNC = 4, REGS = 5, IMM = 1+8, ;
 initial begin
 imemory[0] =24'b011000000000001000100000;           //RTYPE - ADD
 imemory[1] =24'b011000000000001000110001;           //RTYPE - SUBTRACT
@@ -20,7 +20,7 @@ imemory[10] =24'b000110111001111000000100;          //STORE - offset = 4
 imemory[11] =24'b001000000000000000000011;          //JUMP by 3 (PC+3)
 imemory[12] =24'b001101000010001100100010;          //LEFT_SHIFT
 imemory[13] =24'b001111001110100101010001;          //RIGHT_SHIFT
-imemory[14] =24'b01000;          //BRANCH_OVF
+imemory[14] =24'b010000000000001000000011;          //BRANCH_OVF
 imemory[15] =24'b010011011010111110000101;          //SLT
 imemory[16] =24'b011011100111010000000010;          //BEQ- offset = 2
 imemory[17] =24'b011101101111100000000010;          //BNE- offset = 2
@@ -31,7 +31,7 @@ assign instruction_out = imemory[PC_address];
 integer k;
 initial begin
   for (k = 18; k < NOMU; k = k + 1) begin  
-    imemory[k] = 24'b0;                 
+    imemory[k] <= 24'b0;                 
   end
 end
 
