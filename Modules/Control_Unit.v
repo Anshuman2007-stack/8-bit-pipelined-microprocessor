@@ -23,6 +23,7 @@ parameter BRANCH_OVF        = 5'b01000;
 parameter SLT               = 5'b01001;
 parameter BEQ           =5'b01101;
 parameter BNE           =5'b01110;
+parameter LSR           =5'b01111;
 
 parameter F_ADD = 4'b0000;
 parameter F_SUB = 4'b0001;
@@ -46,6 +47,7 @@ parameter ALU_XOR               = 4'b1111;
 parameter ALU_Right_Shift       = 4'b0001;
 parameter ALU_Left_Shift        = 4'b0010;
 parameter ALU_SLT               = 4'b0101;
+parameter ALU_LSR               = 4'b0011;
 
 always@(*) begin
     RegWrite = 0;
@@ -124,6 +126,11 @@ always@(*) begin
         alu_control=ALU_SUBTRACT;
         PCSrc= ~Zero;
         end
+        LSR:begin
+        RegWrite = 1;
+        alu_control = ALU_LSR;
+        end
+        
         default: alu_control = 4'b0000;
     endcase
 end
