@@ -46,23 +46,15 @@ def convert_to_five_bit_binary (reg):           #NO OF VALS FOR REGS = 32
         return str(first_digit) + str(second_digit) + str(third_digit) + str (fourth_digit) + str(fifth_digit)
     else: 
         raise ValueError(f"Invalid register: {reg}")
+    
 
 def convert_to_nine_bit_binary(num):      
     num = int(num)
-    if not (0 <= num <= 255):
-        raise ValueError("Immediate out of range")
-    else:
-        first_digit   = int(num / 128)
-        second_digit  = int((num - first_digit*128) / 64)
-        third_digit   = int((num - first_digit*128 - second_digit*64) / 32)
-        fourth_digit  = int((num - first_digit*128 - second_digit*64 - third_digit*32) / 16)
-        fifth_digit   = int((num - first_digit*128 - second_digit*64 - third_digit*32 - fourth_digit*16) / 8)
-        sixth_digit   = int((num - first_digit*128 - second_digit*64 - third_digit*32 - fourth_digit*16 - fifth_digit*8) / 4)
-        seventh_digit = int((num - first_digit*128 - second_digit*64 - third_digit*32 - fourth_digit*16 - fifth_digit*8 - sixth_digit*4) / 2)
-        eighth_digit  = int((num - first_digit*128 - second_digit*64 - third_digit*32 - fourth_digit*16 - fifth_digit*8 - sixth_digit*4 - seventh_digit*2) / 1)
-
-    return ("0" + str(first_digit) + str(second_digit) + str(third_digit) + str(fourth_digit) + str(fifth_digit) + str(sixth_digit) + str(seventh_digit) + str(eighth_digit))
-
+    if not (-64 <= num <= 63):
+        raise ValueError("Immediate out of range: must be between -64 and 63 inclusive")
+    
+    # two's complement in 8 bits, then prepend 0 for the 9th padding bit
+    return f"0{num & 0xFF:08b}"
 
 
 def binary_instruction (inst):
