@@ -25,6 +25,7 @@ parameter BEQ           =5'b01101;
 parameter BNE           =5'b01110;
 parameter LSR           =5'b01111;
 parameter ADDI          =5'b00101;
+parameter ROR =          5'b01010;
 
 parameter F_ADD = 4'b0000;
 parameter F_SUB = 4'b0001;
@@ -49,6 +50,7 @@ parameter ALU_Right_Shift       = 4'b0001;
 parameter ALU_Left_Shift        = 4'b0010;
 parameter ALU_SLT               = 4'b0101;
 parameter ALU_LSR               = 4'b0011;
+parameter ALU_ROR               = 4'b0100;
 
 always@(*) begin
     RegWrite = 0;
@@ -135,6 +137,11 @@ always@(*) begin
         RegWrite=1;
         ALUSrc=1;
         alu_control = ALU_ADD;
+        end
+        ROR: begin
+        RegWrite = 1;
+        ALUSrc = 0;
+        alu_control = ALU_ROR;
         end
         
         default: alu_control = 4'b0000;
