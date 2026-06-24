@@ -2,12 +2,12 @@
 
 /*
  * Testbench: Single-Cycle Processor 
- *Basically, we load up 3 unsorted numbers (5, 8, 2) into the data 
+ * Basically, we load up 3 unsorted numbers (5, 8, 2) into the data 
  * memory right at the start. Then, we feed the instruction memory with 
  * the machine code. 
  *
  * The C code logic we're mimicking is a standard double-loop array sort:
- * * int arr[3] = {5, 8, 2};
+ * int arr[3] = {5, 8, 2};
  * int n = 3;
  * for(int i=0; i<n; i++) {
  * for(int j=i; j<n; j++) {
@@ -19,33 +19,34 @@
  * }
  * }
  * }
- * * And here is the rough assembly breakdown of what those 24-bit hex codes 
+ *
+ * And here is the rough assembly breakdown of what those 24-bit hex codes 
  * are actually doing under the hood:
  * // --- Initialization ---
  * LI R3, 3          ; R3 = n = 3 (Array size)
  * LI R1, 0          ; R1 = i = 0 (Outer loop counter starts at 0)
- * * OUTER_LOOP: 
+ * OUTER_LOOP: 
  * CMP R1, R3        ; Are we done with the outer loop? (i vs n)
  * BGE EXIT          ; If i >= n, bail out.
  * MOV R2, R1        ; R2 = j = i (Inner loop counter starts at i)
- * * INNER_LOOP: 
+ * INNER_LOOP: 
  * CMP R2, R3        ; Are we done with the inner loop? (j vs n)
  * BGE END_INNER     ; If j >= n, break out of the inner loop.
- * * // --- Memory Fetch ---
+ * // --- Memory Fetch ---
  * LOAD R4, [R1]     ; R4 = arr[i]
  * LOAD R5, [R2]     ; R5 = arr[j]
- * * // --- Compare & Swap ---
+ * // --- Compare & Swap ---
  * CMP R4, R5        ; Is arr[i] > arr[j]?
  * BLE SKIP_SWAP     ; Nope, they are in the right order. Skip the swap!
  * STORE R5, [R1]    ; Swap part 1: arr[i] gets the value of arr[j]
  * STORE R4, [R2]    ; Swap part 2: arr[j] gets the old value of arr[i]
- * * SKIP_SWAP:  
+ * SKIP_SWAP:  
  * ADD R2, 1         ; j++
  * JMP INNER_LOOP    ; Back to the top of the inner loop
- * * END_INNER:
+ * END_INNER:
  * ADD R1, 1         ; i++
  * JMP OUTER_LOOP    ; Back to the top of the outer loop
- * * EXIT:  
+ * EXIT:  
  */
 
 module tb_MCPModule();
@@ -62,6 +63,18 @@ module tb_MCPModule();
     );
 
     always #5 clk = ~clk;
+
+    always @(negedge clk) begin
+        if (!rst1) begin
+            $display("Time: %4t | R1(i)=%2d | R2(j)=%2d | R3(n)=%2d | R4(arr[i])=%2d | R5(arr[j])=%2d", 
+                     $time, 
+                     uut.rg.Registers[1], 
+                     uut.rg.Registers[2], 
+                     uut.rg.Registers[3], 
+                     uut.rg.Registers[4], 
+                     uut.rg.Registers[5]);
+        end
+    end
 
     initial begin
         // Fire up the clock and hold resets high initially
