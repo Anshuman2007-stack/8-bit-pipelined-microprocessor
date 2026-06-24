@@ -33,7 +33,7 @@ end
 integer k;
 initial begin
   for (k = 22; k < NOMU; k = k + 1) begin  
-    imemory[k] <= 24'b0;                 
+    imemory[k] = 24'b0;                 
   end
 end
   
