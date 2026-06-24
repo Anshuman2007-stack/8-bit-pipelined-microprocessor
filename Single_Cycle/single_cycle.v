@@ -199,6 +199,7 @@ always @(*) begin
     Out = 8'b0;
     Overflow = 1'b0;
     Zero = 1'b0;
+    shift_amt=3'b0;
 
     case (alu_control)
         ADD: begin
