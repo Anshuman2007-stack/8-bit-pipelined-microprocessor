@@ -98,6 +98,10 @@ parameter BRANCH_OVF        = 5'b01000;
 parameter SLT               = 5'b01001;
 parameter BEQ           =5'b01101;
 parameter BNE           =5'b01110;
+parameter LSR           =5'b01111;
+parameter ADDI          =5'b00101;
+parameter ROR           =5'b01010;
+parameter ROL           =5'b01011;
 
 always @(*) begin
     opcode    = instruction[23:19];
@@ -123,7 +127,7 @@ always @(*) begin
         JUMP: begin
             immediate = instruction[7:0];
         end
-        LEFT_SHIFT, RIGHT_SHIFT: begin
+        LEFT_SHIFT, RIGHT_SHIFT,LSR,ROR,ROL: begin
             rs = instruction[18:14];
             rt = instruction[13:9];
             rd = instruction[8:4];
@@ -148,12 +152,17 @@ always @(*) begin
         rt = instruction[13:9];       
         immediate= instruction[7:0];
         end
+        ADDI: begin
+        rs = instruction[18:14];
+        rd = instruction[13:9];
+        immediate = instruction[7:0];
+        end
+            
         default: begin
         end
     endcase
 end
 endmodule
-
 module alu(
     input  [7:0] SrcA,
     input  [7:0] SrcB,
