@@ -148,7 +148,7 @@ The `Control_Unit` generates the following signals per instruction:
 | JUMP       | 00100 | Always | PC ← PC + IMM (unconditional jump) |
 | BEQ        | 01101 | Zero flag set | Branch if RS == RT |
 | BNE        | 01110 | Zero flag clear | Branch if RS ≠ RT |
-| BRANCH_OVF | 01000 | Overflow flag set | Branch if last ADD/SUB overflowed |
+| BRANCH_OVF | 01000 | Overflow flag set | Branch if last ADD overflowed |
 
 #### Comparison Instructions
 
