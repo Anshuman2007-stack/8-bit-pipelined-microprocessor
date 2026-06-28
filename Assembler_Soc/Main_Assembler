@@ -1,6 +1,6 @@
 #replace filename with your file containing the assembly code accrding to the isa given in readme file with newline as separator
 
-with open("filename.txt", "r") as file:
+with open("Testcode.txt", "r") as file:
     lines = file.readlines()
     print(lines)
 
