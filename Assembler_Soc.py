@@ -1,3 +1,9 @@
+#replace filename with your file containing the assembly code accrding to the isa given in readme file with newline as separator
+
+with open("filename.txt", "r") as file:
+    lines = file.readlines()
+    print(lines)
+
 opcode = {
     "R_TYPE":      "01100",
     "LOADI":       "00001",
@@ -9,9 +15,12 @@ opcode = {
     "BOV":         "01000",
     "SLT":         "01001",
     "BEQ":         "01101",
-    "BNE":         "01110"
+    "BNE":         "01110",
+    "LSR":         "01111",
+    "ADDI":        "00101",
+    "ROR":         "01010",
+    "ROL":         "01011"
 }
-
 
 func = {
     "ADD": "0000",
@@ -57,6 +66,7 @@ def convert_to_nine_bit_binary(num):
     return f"0{num & 0xFF:08b}"
 
 
+
 def binary_instruction (inst):
 
     parsed = parse_instruction(inst)
@@ -83,7 +93,7 @@ def binary_instruction (inst):
         opcode_inst = opcode.get(parsed[0])
         return opcode_inst + convert_to_five_bit_binary(parsed[1]) + convert_to_five_bit_binary(parsed[2]) + convert_to_nine_bit_binary(parsed[3])
     
-    elif parsed[0] == "STORE": #I-TYPE:- COMMAND RS RT IMMEDIATE:-  
+    elif (parsed[0] == "STORE" or parsed[0] == "ADDI"): #I-TYPE:- COMMAND RS RT IMMEDIATE:-  
         opcode_inst = opcode.get(parsed[0])
         return opcode_inst + convert_to_five_bit_binary(parsed[1]) + convert_to_five_bit_binary(parsed[2]) + convert_to_nine_bit_binary(parsed[3])
 
@@ -91,11 +101,7 @@ def binary_instruction (inst):
         opcode_inst = opcode.get(parsed[0])
         return opcode_inst + 10*"0" + convert_to_nine_bit_binary(parsed[1])
     
-    elif parsed[0] == "LSH":
-        opcode_inst = opcode.get(parsed[0])
-        return opcode_inst + convert_to_five_bit_binary(parsed[1]) + convert_to_five_bit_binary(parsed[2]) + convert_to_five_bit_binary(parsed[3]) + "0000"
-    
-    elif parsed[0] == "RSH":
+    elif (parsed[0] == "LSH" or parsed[0] == "RSH" or parsed[0] == "LSR" or parsed[0] == "ROR" or parsed[0] == "ROL"):
         opcode_inst = opcode.get(parsed[0])
         return opcode_inst + convert_to_five_bit_binary(parsed[1]) + convert_to_five_bit_binary(parsed[2]) + convert_to_five_bit_binary(parsed[3]) + "0000"
     
@@ -119,12 +125,8 @@ def binary_instruction (inst):
         print("Invalid syntax")
         return
 
-if __name__ == "__main__":
-    while True:
-        try:
-            line = input("Enter instruction (or 'exit'): ")
-            if line.strip().lower() == "exit":
-                break
-            print(binary_instruction(line))
-        except Exception as e:
-            print("Error:", e)
+for line in lines:
+    if (len(line.split())>4 and not(line.split()[4].startswith("#"))):
+        print("Only one instruction per line")
+    elif (len(line.split()) ==0 or line.strip().startswith("#")): continue
+    else: print(binary_instruction(line))
