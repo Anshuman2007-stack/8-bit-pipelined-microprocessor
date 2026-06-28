@@ -91,29 +91,48 @@ module tb_MCPModule();
         uut.dm.dmemory[2] = 8'd2;
 
         // Load the compiled machine code into instruction memory
-        uut.im.imemory[0]  = 24'h080000; 
-        uut.im.imemory[1]  = 24'h080603; 
-        uut.im.imemory[2]  = 24'h080E01; 
-        uut.im.imemory[3]  = 24'h080200; 
+        // uut.im.imemory[0]  = 24'h080000; 
+        // uut.im.imemory[1]  = 24'h080603; 
+        // uut.im.imemory[2]  = 24'h080E01; 
+        // uut.im.imemory[3]  = 24'h080200; 
         
-        uut.im.imemory[4]  = 24'h68460D; 
-        uut.im.imemory[5]  = 24'h604020; 
+        // uut.im.imemory[4]  = 24'h68460D; 
+        // uut.im.imemory[5]  = 24'h604020; 
         
-        uut.im.imemory[6]  = 24'h688609; 
-        uut.im.imemory[7]  = 24'h104800; 
-        uut.im.imemory[8]  = 24'h108A00; 
+        // uut.im.imemory[6]  = 24'h688609; 
+        // uut.im.imemory[7]  = 24'h104800; 
+        // uut.im.imemory[8]  = 24'h108A00; 
         
-        uut.im.imemory[9]  = 24'h494880; 
-        uut.im.imemory[10] = 24'h6A0003; 
+        // uut.im.imemory[9]  = 24'h494880; 
+        // uut.im.imemory[10] = 24'h6A0003; 
         
-        uut.im.imemory[11] = 24'h188800; 
-        uut.im.imemory[12] = 24'h184A00; 
+        // uut.im.imemory[11] = 24'h188800; 
+        // uut.im.imemory[12] = 24'h184A00; 
         
-        uut.im.imemory[13] = 24'h608E20; 
-        uut.im.imemory[14] = 24'h2000F8; 
+        // uut.im.imemory[13] = 24'h608E20; 
+        // uut.im.imemory[14] = 24'h2000F8; 
         
-        uut.im.imemory[15] = 24'h604E10; 
-        uut.im.imemory[16] = 24'h2000F4; 
+        // uut.im.imemory[15] = 24'h604E10; 
+        // uut.im.imemory[16] = 24'h2000F4; 
+
+uut.im.imemory[0]  = 24'h080000;  // LOADI R0 0
+uut.im.imemory[1]  = 24'h08C003;  // LOADI R3 3
+uut.im.imemory[2]  = 24'h084000;  // LOADI R1 0
+uut.im.imemory[3]  = 24'h498230;  // SLT R6 R1 R3
+uut.im.imemory[4]  = 24'h68000D;  // BEQ R6 R0 13  → EXIT
+uut.im.imemory[5]  = 24'h608200;  // ADD R2 R1 R0
+uut.im.imemory[6]  = 24'h498430;  // SLT R6 R2 R3
+uut.im.imemory[7]  = 24'h680008;  // BEQ R6 R0 8   → END_INNER
+uut.im.imemory[8]  = 24'h104800;  // LOAD R1 R4 0
+uut.im.imemory[9]  = 24'h108A00;  // LOAD R2 R5 0
+uut.im.imemory[10] = 24'h498A40;  // SLT R6 R5 R4
+uut.im.imemory[11] = 24'h680003;  // BEQ R6 R0 3   → SKIP_SWAP
+uut.im.imemory[12] = 24'h184A00;  // STORE R1 R5 0
+uut.im.imemory[13] = 24'h188800;  // STORE R2 R4 0
+uut.im.imemory[14] = 24'h288401;  // ADDI R2 R2 1
+uut.im.imemory[15] = 24'h2000F7;  // JUMP -9
+uut.im.imemory[16] = 24'h284201;  // ADDI R1 R1 1
+uut.im.imemory[17] = 24'h2000F2;  // JUMP -14
 
         // Let the simulation run for enough time to finish the sorting loops
         #500; 
