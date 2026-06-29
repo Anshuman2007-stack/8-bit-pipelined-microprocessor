@@ -1,69 +1,14 @@
 `timescale 1ns / 1ps
-
-/*
- * Testbench: Single-Cycle Processor 
- * Basically, we load up 3 unsorted numbers (5, 8, 2) into the data 
- * memory right at the start. Then, we feed the instruction memory with 
- * the machine code. 
- *
- * The C code logic we're mimicking is a standard double-loop array sort:
- * int arr[3] = {5, 8, 2};
- * int n = 3;
- * for(int i=0; i<n; i++) {
- * for(int j=i; j<n; j++) {
- * if(arr[i] > arr[j]) {
- * // Swap them
- * int temp = arr[j];
- * arr[j] = arr[i];
- * arr[i] = temp;
- * }
- * }
- * }
- *
- * And here is the rough assembly breakdown of what those 24-bit hex codes 
- * are actually doing under the hood:
- * // --- Initialization ---
- * LI R3, 3          ; R3 = n = 3 (Array size)
- * LI R1, 0          ; R1 = i = 0 (Outer loop counter starts at 0)
- * OUTER_LOOP: 
- * CMP R1, R3        ; Are we done with the outer loop? (i vs n)
- * BGE EXIT          ; If i >= n, bail out.
- * MOV R2, R1        ; R2 = j = i (Inner loop counter starts at i)
- * INNER_LOOP: 
- * CMP R2, R3        ; Are we done with the inner loop? (j vs n)
- * BGE END_INNER     ; If j >= n, break out of the inner loop.
- * // --- Memory Fetch ---
- * LOAD R4, [R1]     ; R4 = arr[i]
- * LOAD R5, [R2]     ; R5 = arr[j]
- * // --- Compare & Swap ---
- * CMP R4, R5        ; Is arr[i] > arr[j]?
- * BLE SKIP_SWAP     ; Nope, they are in the right order. Skip the swap!
- * STORE R5, [R1]    ; Swap part 1: arr[i] gets the value of arr[j]
- * STORE R4, [R2]    ; Swap part 2: arr[j] gets the old value of arr[i]
- * SKIP_SWAP:  
- * ADD R2, 1         ; j++
- * JMP INNER_LOOP    ; Back to the top of the inner loop
- * END_INNER:
- * ADD R1, 1         ; i++
- * JMP OUTER_LOOP    ; Back to the top of the outer loop
- * EXIT:  
- */
-
 module tb_MCPModule();
-
     reg clk;
     reg rst1; 
-
     wire [7:0] result;
-
     MCPModule uut (
         .clk(clk), 
         .rst1(rst1), 
         .result(result)
     );
-
     always #5 clk = ~clk;
-
     always @(negedge clk) begin
         if (!rst1) begin
             $display("Time: %4t | R1(i)=%2d | R2(j)=%2d | R3(n)=%2d | R4(arr[i])=%2d | R5(arr[j])=%2d", 
@@ -75,69 +20,43 @@ module tb_MCPModule();
                      uut.rg.Registers[5]);
         end
     end
-
     initial begin
-        // Fire up the clock and hold resets high initially
         clk = 0;
         rst1 = 1;
-
         #100;
-        // Drop resets to let the processor start running
         rst1 = 0;
-
-        // Load our unsorted array into data memory
         uut.dm.dmemory[0] = 8'd5;
         uut.dm.dmemory[1] = 8'd8;
         uut.dm.dmemory[2] = 8'd2;
 
-        // Load the compiled machine code into instruction memory
-        // uut.im.imemory[0]  = 24'h080000; 
-        // uut.im.imemory[1]  = 24'h080603; 
-        // uut.im.imemory[2]  = 24'h080E01; 
-        // uut.im.imemory[3]  = 24'h080200; 
+        uut.im.imemory[ 0]  = 24'h080E00;  // 000010000000111000000000
+        uut.im.imemory[ 1]  = 24'h080603;  // 000010000000011000000011
+        uut.im.imemory[ 2]  = 24'h081001;  // 000010000001000000000001
+        uut.im.imemory[ 3]  = 24'h080200;  // 000010000000001000000000
+        uut.im.imemory[ 4]  = 24'h484660;  // 010010000100011001100000
+        uut.im.imemory[ 5]  = 24'h698E11;  // 011010011000111000010001
+        uut.im.imemory[ 6]  = 24'h604E20;  // 011000000100111000100000
+        uut.im.imemory[ 7]  = 24'h488660;  // 010010001000011001100000
+        uut.im.imemory[ 8]  = 24'h698E0D;  // 011010011000111000001101
+        uut.im.imemory[ 9]  = 24'h600290;  // 011000000000001010010000
+        uut.im.imemory[10]  = 24'h124800;  // 000100100100100000000000
+        uut.im.imemory[11]  = 24'h600490;  // 011000000000010010010000
+        uut.im.imemory[12]  = 24'h124A00;  // 000100100100101000000000
+        uut.im.imemory[13]  = 24'h494860;  // 010010010100100001100000
+        uut.im.imemory[14]  = 24'h698E05;  // 011010011000111000000101
+        uut.im.imemory[15]  = 24'h600290;  // 011000000000001010010000
+        uut.im.imemory[16]  = 24'h1A4A00;  // 000110100100101000000000
+        uut.im.imemory[17]  = 24'h600490;  // 011000000000010010010000
+        uut.im.imemory[18]  = 24'h1A4800;  // 000110100100100000000000
+        uut.im.imemory[19]  = 24'h609020;  // 011000001001000000100000
+        uut.im.imemory[20]  = 24'h2000F3;  // 001000000000000011110011
+        uut.im.imemory[21]  = 24'h605010;  // 011000000101000000010000
+        uut.im.imemory[22]  = 24'h2000EE;  // 001000000000000011101110
+        uut.im.imemory[23]  = 24'h080000;  // 000010000000000000000000
         
-        // uut.im.imemory[4]  = 24'h68460D; 
-        // uut.im.imemory[5]  = 24'h604020; 
-        
-        // uut.im.imemory[6]  = 24'h688609; 
-        // uut.im.imemory[7]  = 24'h104800; 
-        // uut.im.imemory[8]  = 24'h108A00; 
-        
-        // uut.im.imemory[9]  = 24'h494880; 
-        // uut.im.imemory[10] = 24'h6A0003; 
-        
-        // uut.im.imemory[11] = 24'h188800; 
-        // uut.im.imemory[12] = 24'h184A00; 
-        
-        // uut.im.imemory[13] = 24'h608E20; 
-        // uut.im.imemory[14] = 24'h2000F8; 
-        
-        // uut.im.imemory[15] = 24'h604E10; 
-        // uut.im.imemory[16] = 24'h2000F4; 
 
-uut.im.imemory[0]  = 24'h080000;  // LOADI R0 0
-uut.im.imemory[1]  = 24'h08C003;  // LOADI R3 3
-uut.im.imemory[2]  = 24'h084000;  // LOADI R1 0
-uut.im.imemory[3]  = 24'h498230;  // SLT R6 R1 R3
-uut.im.imemory[4]  = 24'h68000D;  // BEQ R6 R0 13  → EXIT
-uut.im.imemory[5]  = 24'h608200;  // ADD R2 R1 R0
-uut.im.imemory[6]  = 24'h498430;  // SLT R6 R2 R3
-uut.im.imemory[7]  = 24'h680008;  // BEQ R6 R0 8   → END_INNER
-uut.im.imemory[8]  = 24'h104800;  // LOAD R1 R4 0
-uut.im.imemory[9]  = 24'h108A00;  // LOAD R2 R5 0
-uut.im.imemory[10] = 24'h498A40;  // SLT R6 R5 R4
-uut.im.imemory[11] = 24'h680003;  // BEQ R6 R0 3   → SKIP_SWAP
-uut.im.imemory[12] = 24'h184A00;  // STORE R1 R5 0
-uut.im.imemory[13] = 24'h188800;  // STORE R2 R4 0
-uut.im.imemory[14] = 24'h288401;  // ADDI R2 R2 1
-uut.im.imemory[15] = 24'h2000F7;  // JUMP -9
-uut.im.imemory[16] = 24'h284201;  // ADDI R1 R1 1
-uut.im.imemory[17] = 24'h2000F2;  // JUMP -14
+        #2000;   //If your simulation is not executing like our results then set the XSim simulation runtime to 5000 ns instead of default 1000 ns
 
-        // Let the simulation run for enough time to finish the sorting loops
-        #500; 
-        
-        // Print the results to the console!
         $display("========================================");
         $display("Execution Complete. Checking Data Memory");
         $display("========================================");
@@ -145,8 +64,7 @@ uut.im.imemory[17] = 24'h2000F2;  // JUMP -14
         $display("arr[1] = %d (Expected: 5)", uut.dm.dmemory[1]);
         $display("arr[2] = %d (Expected: 8)", uut.dm.dmemory[2]);
         $display("========================================");
-        
+
         $finish;
     end
-
 endmodule
