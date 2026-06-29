@@ -302,7 +302,7 @@ JUMP -18         # jump to OUTER_CHECK (line 22-18=4)
 LOADI R0 0       # halt (no-op, processor loops here forever)
 ```
 
-This program exercises every major subsystem of the processor: immediate loading (`LOADI`), register-to-register arithmetic (`ADDI`), base-plus-offset memory access (`LOAD`/`STORE`), signed comparison (`SLT`), conditional branching (`BEQ`), and unconditional jumps (`JUMP`) — including backward (negative-offset) jumps for both loop bodies.
+This program exercises every major subsystem of the processor: immediate loading (`LOADI`), base-plus-offset memory access (`LOAD`/`STORE`), signed comparison (`SLT`), conditional branching (`BEQ`), and unconditional jumps (`JUMP`) — including backward (negative-offset) jumps for both loop bodies.
 
 **Verified result:** `{5, 8, 2}` → `{2, 5, 8}`, confirmed via Vivado behavioral simulation (Mid_Eval_Sim_Results with Mid_Eval_tb.v), with simulation completing cleanly.
 
