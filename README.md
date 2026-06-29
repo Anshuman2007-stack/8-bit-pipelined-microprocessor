@@ -257,40 +257,54 @@ for (int i = 0; i < n; i++)
         if (arr[i] > arr[j]) { swap(arr[i], arr[j]); }
 ```
 
-Register usage: `R1` = outer index `i`, `R2` = inner index `j`, `R3` = `n` (array size), `R4`/`R5` = loaded values for comparison, `R6` = comparison result.
-
 ```asm
-LOADI       R3, 3                # n = 3
-LOADI       R1, 0                # i = 0
+LOADI R7 0       # R7 = 0 (constant zero, used for comparisons and neutral ADD)
+LOADI R3 3       # R3 = n = 3 (array size)
+LOADI R8 1       # R8 = 1 (constant one, used for incrementing)
+LOADI R1 0       # R1 = i = 0 (outer loop counter)
 
-OUTER_LOOP:
-BEQ         R1, R3, 13            # if i == n, exit outer loop
-ADDI        R2, R1, 0             # j = i
+# OUTER_CHECK: if i >= n, jump to END
+SLT R1 R3 R6     # R6 = (i < n)
+BEQ R6 R7 17     # if R6 == 0 (i >= n), jump to END (line 5+17=22)
 
-INNER_LOOP:
-BEQ         R2, R3, 9             # if j == n, exit inner loop
-LOAD        R1, R4, 0             # R4 = arr[i]
-LOAD        R2, R5, 0             # R5 = arr[j]
-SLT         R5, R4, R6            # R6 = (arr[j] < arr[i]) ? 1 : 0
-BEQ         R6, R0, 3             # if not less-than, skip swap
-STORE       R1, R5, 0             # arr[i] = R5
-STORE       R2, R4, 0             # arr[j] = R4
+# j = i (inner loop starts where outer loop is)
+ADD R1 R7 R2     # R2 = j = R1 + 0 = i
 
-SKIP_SWAP:
-ADDI        R2, R2, 1             # j++
-JUMP        -8                    # back to INNER_LOOP
+# INNER_CHECK: if j >= n, jump to OUTER_INC
+SLT R2 R3 R6     # R6 = (j < n)
+BEQ R6 R7 13     # if R6 == 0 (j >= n), jump to OUTER_INC (line 8+13=21)
 
-END_INNER:
-ADDI        R1, R1, 1             # i++
-JUMP        -12                   # back to OUTER_LOOP
+# Load arr[i] and arr[j] from data memory
+ADD R0 R1 R9     # R9 = base(0) + i = address of arr[i]
+LOAD R9 R4 0     # R4 = MEM[R9 + 0] = arr[i]
+ADD R0 R2 R9     # R9 = base(0) + j = address of arr[j]
+LOAD R9 R5 0     # R5 = MEM[R9 + 0] = arr[j]
 
-EXIT:
-JUMP        0                     # halt (self-jump)
+# Compare: if arr[j] >= arr[i], no swap needed
+SLT R5 R4 R6     # R6 = (arr[j] < arr[i])
+BEQ R6 R7 5      # if R6 == 0 (no swap needed), jump to J_INC (line 14+5=19)
+
+# SWAP: arr[i] = arr[j], arr[j] = old arr[i]
+ADD R0 R1 R9     # R9 = base(0) + i = address of arr[i]
+STORE R9 R5 0    # MEM[R9 + 0] = R5, so arr[i] = arr[j]
+ADD R0 R2 R9     # R9 = base(0) + j = address of arr[j]
+STORE R9 R4 0    # MEM[R9 + 0] = R4, so arr[j] = old arr[i]
+
+# J_INC: j++ then loop back to INNER_CHECK
+ADD R2 R8 R2     # R2 = j + 1 (j++)
+JUMP -13         # jump to INNER_CHECK (line 20-13=7)
+
+# OUTER_INC: i++ then loop back to OUTER_CHECK
+ADD R1 R8 R1     # R1 = i + 1 (i++)
+JUMP -18         # jump to OUTER_CHECK (line 22-18=4)
+
+# END: sorting complete, halt
+LOADI R0 0       # halt (no-op, processor loops here forever)
 ```
 
 This program exercises every major subsystem of the processor: immediate loading (`LOADI`), register-to-register arithmetic (`ADDI`), base-plus-offset memory access (`LOAD`/`STORE`), signed comparison (`SLT`), conditional branching (`BEQ`), and unconditional jumps (`JUMP`) — including backward (negative-offset) jumps for both loop bodies.
 
-**Verified result:** `{5, 8, 2}` → `{2, 5, 8}`, confirmed via Vivado behavioral simulation (`tb_MCPModule_behav`), with simulation completing cleanly.
+**Verified result:** `{5, 8, 2}` → `{2, 5, 8}`, confirmed via Vivado behavioral simulation (Mid_Eval_Sim_Results with Mid_Eval_tb.v), with simulation completing cleanly.
 
 ## Contributors
 
