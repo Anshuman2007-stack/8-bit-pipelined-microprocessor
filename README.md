@@ -52,6 +52,15 @@ The design covers arithmetic, logic, memory, shift, rotate, branch, and jump ope
 | Memory organization | Harvard (separate instruction and data memory) |
 | Execution model | Single-cycle |
 | Control unit | Combinational |
+| ALU                 | Combinational |
+| Instruction Decoder | Combinational |
+| PC_Adder            | Combinational |
+| Branch_Adder        | Combinational |
+| Mux                 | Combinational |
+| Program Counter     | Sequential    |
+| Register File       | Sequential    |
+| Data Memory         | Sequential    |
+| Instruction Memory  | Sequential    |
 
 ### Control Signals
 
@@ -152,7 +161,7 @@ The `Control_Unit` generates the following signals per instruction:
 | `JUMP` | `00100` | Always | `PC ← PC + IMM` (unconditional, PC-relative) |
 | `BEQ` | `01101` | Zero flag set | Branch if RS == RT |
 | `BNE` | `01110` | Zero flag clear | Branch if RS ≠ RT |
-| `BOV` | `01000` | Overflow flag set | Branch if last ADD/SUB overflowed |
+| `BOV` | `01000` | Overflow flag set | Branch if last ADD overflowed |
 
 #### Comparison Instructions
 
@@ -300,6 +309,7 @@ JUMP -18         # jump to OUTER_CHECK (line 22-18=4)
 
 # END: sorting complete, halt
 LOADI R0 0       # halt (no-op, processor loops here forever)
+
 ```
 
 This program exercises every major subsystem of the processor: immediate loading (`LOADI`), base-plus-offset memory access (`LOAD`/`STORE`), signed comparison (`SLT`), conditional branching (`BEQ`), and unconditional jumps (`JUMP`) — including backward (negative-offset) jumps for both loop bodies.
