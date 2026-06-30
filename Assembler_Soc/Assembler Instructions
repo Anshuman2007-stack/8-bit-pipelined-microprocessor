@@ -13,23 +13,6 @@ OR  R1 R2 R3     # R3 = R1 | R2          (bitwise OR)
 NOT R1 R2 R3     # R3 = ~R1              (bitwise NOT - middle register has no purpose)
 XOR R1 R2 R3     # R3 = R1 ^ R2          (bitwise XOR)
 
-LOADI (opcode 00001): LOADI Rd Immediate
-Format: opcode(5) 00000(5) rd(5) immediate(1+8)
-LOADI R1 5       # R1 = 5                (load immediate value into register)
-
-LOAD (opcode 00010): LOAD Rs Rd Immediate 
-# Format: opcode(5) rs(5) rd(5) immediate(9)
-LOAD R1 R2 4     # R2 = MEM[R1 + 4]      (load from data memory into Rd)
-
-STORE (opcode 00011): STORE Rs Rd Immediate
-Format: opcode(5) rs(5) rd(5) immediate(1+8)
-STORE R1 R2 4    # MEM[R1 + 4] = R2      (store Rd's value into data memory)
-
-JUMP (opcode 00100): JUMP Immediate
-Format: opcode(5) 0000000000(11) immediate(8)
-JUMP 5           # PC = PC + 5           (unconditional relative jump, signed offset)
-JUMP -5          # PC = PC - 5           (jump backward, e.g. for loops)
-
 LSH / Left Shift (opcode 00110): LSH Rs Rt Rd
 Format: opcode(5) rs(5) rt(5) rd(5) 0000(4)
 LSH R1 R2 R3     # R3 = R1 << R2         (left shift R1 by R2, store in R3)
@@ -38,17 +21,9 @@ RSH / Right Shift (opcode 00111): RSH Rs Rt Rd
 Format: opcode(5) rs(5) rt(5) rd(5) 0000(4)
 RSH R1 R2 R3     # R3 = R1 >> R2         (arithmetic right shift R1 by R2, store in R3)
 
-BOV / Branch on Overflow (opcode 01000): BOV Rs Rt Immediate
-Format: opcode(5) rs(5) rt(5) immediate(1+8)
-BOV R1 R2 3      # if (R1 op R2) overflows, PC = PC + 3   (branch on arithmetic overflow)
-
-SLT / Set Less Than (opcode 01001): SLT Rs Rt Rd 
+LSR / Logical Shift Right (opcode 01111): LSR Rs Rt Rd 
 Format: opcode(5) rs(5) rt(5) rd(5) 0000(4)
-SLT R1 R2 R3     # R3 = (R1 < R2) ? 1 : 0   (compare, store boolean result in Rd)
-
-ADDI (opcode 00101): ADDI Rs Rd Immediate
-Format: opcode(5) rs(5) rd(5) immediate(1+8)
-ADDI R1 R2 3     # R2 = R1 + 3           (add immediate to Rs, store in Rd)
+LSR R1 R2 R3     # R3 = R1 >>> R2        (logical right shift, zero-filled)
 
 ROR / Rotate Right (opcode 01010): ROR Rs Rt Rd
 Format: opcode(5) rs(5) rt(5) rd(5) 0000(4)
@@ -58,9 +33,34 @@ ROL / Rotate Left (opcode 01011): ROL Rs Rt Rd
 Format: opcode(5) rs(5) rt(5) rd(5) 0000(4)
 ROL R1 R2 R3     # R3 = R1 rotated left by R2 bits
 
-LSR / Logical Shift Right (opcode 01111): LSR Rs Rt Rd 
+SLT / Set Less Than (opcode 01001): SLT Rs Rt Rd 
 Format: opcode(5) rs(5) rt(5) rd(5) 0000(4)
-LSR R1 R2 R3     # R3 = R1 >>> R2        (logical right shift, zero-filled)
+SLT R1 R2 R3     # R3 = (R1 < R2) ? 1 : 0   (compare, store boolean result in Rd)
+---------------------------------
+LOADI (opcode 00001): LOADI Rd Immediate
+Format: opcode(5) 00000(5) rd(5) immediate(1+8)
+LOADI R1 5       # R1 = 5                (load immediate value into register)
+
+ADDI (opcode 00101): ADDI Rs Rd Immediate
+Format: opcode(5) rs(5) rd(5) immediate(1+8)
+ADDI R1 R2 3     # R2 = R1 + 3           (add immediate to Rs, store in Rd)
+----------------------------------
+LOAD (opcode 00010): LOAD Rs Rd Immediate 
+# Format: opcode(5) rs(5) rd(5) immediate(9)
+LOAD R1 R2 4     # R2 = MEM[R1 + 4]      (load from data memory into Rd)
+
+STORE (opcode 00011): STORE Rs Rd Immediate
+Format: opcode(5) rs(5) rd(5) immediate(1+8)
+STORE R1 R2 4    # MEM[R1 + 4] = R2      (store Rd's value into data memory)
+----------------------------------
+JUMP (opcode 00100): JUMP Immediate
+Format: opcode(5) 0000000000(11) immediate(8)
+JUMP 5           # PC = PC + 5           (unconditional relative jump, signed offset)
+JUMP -5          # PC = PC - 5           (jump backward, e.g. for loops)
+
+BOV / Branch on Overflow (opcode 01000): BOV Rs Rt Immediate
+Format: opcode(5) rs(5) rt(5) immediate(1+8)
+BOV R1 R2 3      # if (R1 op R2) overflows, PC = PC + 3   (branch on arithmetic overflow)
 
 BEQ / Branch if Equal (opcode 01101): BEQ Rs Rt Immediate
 Format: opcode(5) rs(5) rt(5) immediate(1+8)
