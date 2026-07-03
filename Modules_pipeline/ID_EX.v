@@ -33,8 +33,25 @@ output reg [3:0] alu_control_out
  );
  
  always@(posedge clk or posedge reset) begin
-   if (reset==1 || flush==1) begin
+   if (reset==1) begin
    pc_out<= 8'b0;
+   rs_out<= 5'b0;
+   rt_out<= 5'b0;
+   rd_out<= 5'b0;
+   opcode_out<=5'b0;
+   immediate_out<=8'b0;
+   Read_data1_out<=8'b0;
+   Read_data2_out<=8'b0;
+   MemRead_out<=1'b0;
+   ResultSrc_out<=1'b0;
+   ALUSrc_out<=1'b0;
+   MemWrite_out<=1'b0;
+   RegWrite_out<=1'b0;
+   alu_control_out<=4'b0;
+   end
+   
+   else if (flush==1) begin
+      pc_out<= 8'b0;
    rs_out<= 5'b0;
    rt_out<= 5'b0;
    rd_out<= 5'b0;
@@ -70,6 +87,9 @@ output reg [3:0] alu_control_out
    alu_control_out<=alu_control_in;
    end
  end
+   
+
+endmodule   
    
 
 endmodule
