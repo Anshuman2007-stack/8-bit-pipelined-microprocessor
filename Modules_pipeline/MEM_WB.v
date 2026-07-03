@@ -14,7 +14,16 @@ module MEM_WB(
 );
 
 always @(posedge clk or posedge reset) begin
-    if(reset==1 || flush==1) begin
+    if(reset==1) begin
+        Read_data_out <= 8'b0;
+        ALU_result_out <= 8'b0;
+        rd_out <= 5'b0;
+
+        RegWrite_out <= 1'b0;
+        ResultSrc_out <= 1'b0;
+    end
+    
+    else if(flush==1) begin
         Read_data_out <= 8'b0;
         ALU_result_out <= 8'b0;
         rd_out <= 5'b0;
