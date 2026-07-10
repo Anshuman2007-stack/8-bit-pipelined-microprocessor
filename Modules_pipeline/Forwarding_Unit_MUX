@@ -6,8 +6,8 @@ module MUX_3_1 (
     output [7:0] Src_out
 );
 
-    assign Src_out = (forward == 2'b10) ? write_data :
-                 (forward == 2'b01) ? alu_result :
+    assign Src_out = (forward == 2'b01) ? write_data :
+                 (forward == 2'b10) ? alu_result :
                  Src_in;
 
 endmodule
