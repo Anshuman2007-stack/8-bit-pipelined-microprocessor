@@ -1,12 +1,13 @@
-module Forwarding_Unit_MUX( Src_in, Result, alu_result, forward, Src_out);
-input [7:0] Src_in;
-input [7:0] write_data;
-input [7:0] alu_result;
-input [1:0] forward;
-output wire [7:0] Src_out;
+module MUX_3_1 (
+    input [7:0] Src_in,  // Default value (from ID/EX)
+    input [7:0] writedata,  // Forwarded from MEM/WB (writedata)
+    input [7:0] alu_result,  // Forwarded from EX/MEM (alu_result)
+    input [1:0] forward,   // 2-bit select line from Forwarding Unit
+    output [7:0] Src_out
+);
 
-assign Src_out = (forward == 2'b00) ? Src_in:
-                 (forward == 2'b01) ? alu_result:
-                 (forward == 2'b10) ? write_data:
+    assign Src_out = (forward == 2'b10) ? write_data :
+                 (forward == 2'b01) ? alu_result :
                  Src_in;
-endmodule 
+
+endmodule
