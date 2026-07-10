@@ -1,6 +1,6 @@
 module MUX_3_1 (
     input [7:0] Src_in,  // Default value (from ID/EX)
-    input [7:0] writedata,  // Forwarded from MEM/WB (writedata)
+    input [7:0] write_data,  // Forwarded from MEM/WB (writedata)
     input [7:0] alu_result,  // Forwarded from EX/MEM (alu_result)
     input [1:0] forward,   // 2-bit select line from Forwarding Unit
     output [7:0] Src_out
