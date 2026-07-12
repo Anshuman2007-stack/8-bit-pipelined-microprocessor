@@ -100,4 +100,5 @@ MUX_2_1 mem_forward_mux (
     .sel(ForwardMem),       // 1-bit select line from Forwarding Unit
     .out(mem_write_data_fwd)
 );
+Forwarding_Unit f_w(.rs_idex(rs_idex),.rt_idex(rt_idex),.rd_exmem(rd_exmem),.RegWrite_exmem(RegWrite_idex),.rd_memwb(rd_memwb),.RegWrite_memwb(RegWrite_memwb),.rt_exmem(rt_exmem),.MemWrite_exmem(MemWrite_exmem),.forward_A(forward_A),.forward_B(forward_B),.forward_Mem(Forward_Mem));
 endmodule
