@@ -2,7 +2,7 @@
 module IF_ID(
 input clk,
 input reset,
-input stall,
+input IF_IDWrite,
 input flush,
 input [7:0] pc_in,
 input [23:0] instruction_in,
@@ -16,7 +16,7 @@ output reg [23:0] instruction_out
  instruction_out<=24'b0;
  end
  
- else if(stall==1) begin
+   else if(IF_IDWrite==0) begin
  pc_out<=pc_out;
  instruction_out<=instruction_out;
  end
