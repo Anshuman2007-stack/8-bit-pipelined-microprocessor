@@ -104,7 +104,7 @@ MUX_2_1 mem_forward_mux (
     .sel(ForwardMem),       // 1-bit select line from Forwarding Unit
     .out(mem_write_data_fwd)
 );
-Forwarding_Unit f_w(.rs_idex(rs_idex),.rt_idex(rt_idex),.rd_exmem(rd_exmem),.RegWrite_exmem(RegWrite_idex),.rd_memwb(rd_memwb),.RegWrite_memwb(RegWrite_memwb),.rt_exmem(rt_exmem),.MemWrite_exmem(MemWrite_exmem),.forward_A(forward_A),.forward_B(forward_B),.forward_Mem(Forward_Mem));
+  Forwarding_Unit f_w(.rs_idex(rs_idex),.rt_idex(rt_idex),.rd_exmem(rd_exmem),.RegWrite_exmem(RegWrite_exmem),.rd_memwb(rd_memwb),.RegWrite_memwb(RegWrite_memwb),.rt_exmem(rt_exmem),.MemWrite_exmem(MemWrite_exmem),.forward_A(forward_A),.forward_B(forward_B),.forward_Mem(ForwardMem));
 HDU hdu (.id_ex_MemRead(MemRead_idex), .id_ex_rt(rt_idex) , .if_id_rs(Rs1), .if_id_rt(Rs2), .PCWrite(PCWrite) , .IF_ID_Write(IF_ID_Write), .nop(nop));
 
 endmodule
