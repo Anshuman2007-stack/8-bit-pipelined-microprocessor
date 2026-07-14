@@ -64,7 +64,7 @@ assign flush =PCSrc;
 //IF
 PC counter( .clk(clk),.reset(reset),.next_pc(next_pc), .PCWrite(PCWrite), .pc(pc));
 PC_Adder pc_a( .PC(pc), .PC_Plus1(PC_Plus_1_wire));
-Instruction_Memory im( .reset(reset), .PC_Address(pc), .instruction_out(instruction_out));
+Instruction_Memory im( .reset(reset), .PC_address(pc), .instruction_out(instruction_out));
 MUX_2_1 pc_mux( .inA(branch_target), .inB(PC_Plus_1_wire), .sel(PCSrc), .out(next_pc) );
 //IF/ID
 IF_ID if_id( .clk(clk), .reset(reset), .IF_IDWrite(IF_ID_Write), .flush(flush), .pc_in(pc), .pc_out(pc_ifid), .instruction_in(instruction_out), .instruction_out(instruction_ifid) );
@@ -73,7 +73,7 @@ instruction_decoder id (.instruction(instruction_ifid), .opcode(opcode), .func(f
 Control_Unit cu (.opcode(opcode), .func(func),  .RegWrite(RegWrite), .ALUSrc(ALUSrc), .MemWrite(MemWrite), .MemRead(MemRead), .alu_control(alu_control), .ResultSrc(ResultSrc), .nop(nop));
 Register_file rg (.clk(clk), .reset(reset), .RegWrite(RegWrite_memwb), .Rs1(Rs1), .Rs2(Rs2), .Rd(rd_memwb), .WriteData(writedata), .Read_data1(Read_data1), .Read_data2(Read_data2));
 //ID/EX                   
-ID_EX id_ex( .clk(clk), .reset(reset), .stall(stall), .flush(flush),.pc_in(pc_ifid), .rs_in(Rs1),.rt_in(Rs2),.rd_in(Rd), .opcode_in(opcode), .immediate_in(immediate), .Read_data1_in(Read_data1), .Read_data2_in(Read_data2),
+ID_EX id_ex( .clk(clk), .reset(reset), .stall(stall), .flush(flush),.pc_in(pc_ifid), .rs_in(Rs1),.rt_in(Rs2),.rd_in(Rd), .opcode_in(nop ? 5'b0 : opcode), .immediate_in(immediate), .Read_data1_in(Read_data1), .Read_data2_in(Read_data2),
 .MemRead_in(MemRead),.ResultSrc_in(ResultSrc),.ALUSrc_in(ALUSrc),.MemWrite_in(MemWrite),.RegWrite_in(RegWrite), .alu_control_in(alu_control),
 .pc_out(pc_idex),.rs_out(rs_idex),.rt_out(rt_idex),.rd_out(rd_idex),.opcode_out(opcode_idex),.immediate_out(immediate_idex),.Read_data1_out(Read_data1_idex),.Read_data2_out(Read_data2_idex),
 .MemRead_out(MemRead_idex),.ResultSrc_out(ResultSrc_idex),.ALUSrc_out(ALUSrc_idex),.MemWrite_out(MemWrite_idex),.RegWrite_out(RegWrite_idex),.alu_control_out(alu_control_idex));
