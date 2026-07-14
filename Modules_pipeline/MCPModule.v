@@ -55,18 +55,22 @@ wire [7:0] mem_write_data_fwd;
 wire [1:0] forward_A, forward_B;
 wire ForwardMem;
 
+//HDU Control Signals
+wire PCWrite,IF_ID_Write,nop;
+
+  
 assign stall =1'b0;
 assign flush =PCSrc;
 //IF
-PC counter( .clk(clk),.reset(reset),.next_pc(next_pc), .pc(pc) );
+PC counter( .clk(clk),.reset(reset),.next_pc(next_pc), .PCWrite(PCWrite), .pc(pc));
 PC_Adder pc_a( .PC(pc), .PC_Plus1(PC_Plus_1_wire));
 Instruction_Memory im( .reset(reset), .PC_Address(pc), .instruction_out(instruction_out));
 MUX_2_1 pc_mux( .inA(branch_target), .inB(PC_Plus_1_wire), .sel(PCSrc), .out(next_pc) );
 //IF/ID
-IF_ID if_id( .clk(clk), .reset(reset), .stall(stall), .flush(flush), .pc_in(pc), .pc_out(pc_ifid), .instruction_in(instruction_out), .instruction_out(instruction_ifid) );
+IF_ID if_id( .clk(clk), .reset(reset), .IF_IDWrite(IF_ID_Write), .flush(flush), .pc_in(pc), .pc_out(pc_ifid), .instruction_in(instruction_out), .instruction_out(instruction_ifid) );
 //ID
 instruction_decoder id (.instruction(instruction_ifid), .opcode(opcode), .func(func), .rs(Rs1), .rt(Rs2), .rd(Rd), .immediate(immediate));
-Control_Unit cu (.opcode(opcode), .func(func),  .RegWrite(RegWrite), .ALUSrc(ALUSrc), .MemWrite(MemWrite), .MemRead(MemRead), .alu_control(alu_control), .ResultSrc(ResultSrc));
+Control_Unit cu (.opcode(opcode), .func(func),  .RegWrite(RegWrite), .ALUSrc(ALUSrc), .MemWrite(MemWrite), .MemRead(MemRead), .alu_control(alu_control), .ResultSrc(ResultSrc), .nop(nop));
 Register_file rg (.clk(clk), .reset(reset), .RegWrite(RegWrite_memwb), .Rs1(Rs1), .Rs2(Rs2), .Rd(rd_memwb), .WriteData(writedata), .Read_data1(Read_data1), .Read_data2(Read_data2));
 //ID/EX                   
 ID_EX id_ex( .clk(clk), .reset(reset), .stall(stall), .flush(flush),.pc_in(pc_ifid), .rs_in(Rs1),.rt_in(Rs2),.rd_in(Rd), .opcode_in(opcode), .immediate_in(immediate), .Read_data1_in(Read_data1), .Read_data2_in(Read_data2),
@@ -101,4 +105,6 @@ MUX_2_1 mem_forward_mux (
     .out(mem_write_data_fwd)
 );
 Forwarding_Unit f_w(.rs_idex(rs_idex),.rt_idex(rt_idex),.rd_exmem(rd_exmem),.RegWrite_exmem(RegWrite_idex),.rd_memwb(rd_memwb),.RegWrite_memwb(RegWrite_memwb),.rt_exmem(rt_exmem),.MemWrite_exmem(MemWrite_exmem),.forward_A(forward_A),.forward_B(forward_B),.forward_Mem(Forward_Mem));
+HDU hdu (.id_ex_MemRead(MemRead_idex), .id_ex_rt(rt_idex) , .if_id_rs(Rs1), .if_id_rt(Rs2), .PCWrite(PCWrite) , .IF_ID_Write(IF_ID_Write), .nop(nop));
+
 endmodule
