@@ -1,8 +1,6 @@
 #replace filename with your file containing the assembly code accrding to the isa given in readme file with newline as separator
-
 with open("Testcode.txt", "r") as file:
     lines = file.readlines()
-    print(lines)
 
 opcode = {
     "R_TYPE":      "01100",
@@ -19,7 +17,12 @@ opcode = {
     "LSR":         "01111",
     "ADDI":        "00101",
     "ROR":         "01010",
-    "ROL":         "01011"
+    "ROL":         "01011",
+    "JAL":         "10000",
+    "JR":          "10001",
+    "TRAP":        "10010",
+    "ERET":        "10011",
+    "NORMAL":      "00000"
 }
 
 func = {
@@ -93,7 +96,7 @@ def binary_instruction (inst):
         opcode_inst = opcode.get(parsed[0])
         return opcode_inst + convert_to_five_bit_binary(parsed[1]) + convert_to_five_bit_binary(parsed[2]) + convert_to_nine_bit_binary(parsed[3])
     
-    elif (parsed[0] == "STORE" or parsed[0] == "ADDI"): #I-TYPE:- COMMAND RS RT IMMEDIATE:-  
+    elif (parsed[0] == "STORE" or parsed[0] == "ADDI"): #I-TYPE:- COMMAND RS RD IMMEDIATE:-  
         opcode_inst = opcode.get(parsed[0])
         return opcode_inst + convert_to_five_bit_binary(parsed[1]) + convert_to_five_bit_binary(parsed[2]) + convert_to_nine_bit_binary(parsed[3])
 
@@ -120,6 +123,26 @@ def binary_instruction (inst):
     elif parsed[0] == "BNE":
         opcode_inst = opcode.get(parsed[0])
         return opcode_inst + convert_to_five_bit_binary(parsed[1]) + convert_to_five_bit_binary(parsed[2]) + convert_to_nine_bit_binary(parsed[3])
+    
+    elif parsed[0] == "JAL": #JAL R3 7
+        opcode_inst = opcode.get(parsed[0])
+        return opcode_inst + "00000" + convert_to_five_bit_binary(parsed[1]) + convert_to_nine_bit_binary(parsed[2])
+    
+    elif parsed[0] == "JR": #JR R12
+        opcode_inst = opcode.get(parsed[0])
+        return opcode_inst + convert_to_five_bit_binary(parsed[1]) + "00000000000000"
+    
+    elif parsed[0] == "ERET":
+        opcode_inst = opcode.get(parsed[0])
+        return opcode_inst + "0000000000000000000"
+    
+    elif parsed[0] == "TRAP": 
+        opcode_inst = opcode.get(parsed[0])
+        return opcode_inst + "0000000000000000000"
+    
+    elif parsed[0] == "NORMAL":
+        opcode_inst = opcode.get(parsed[0])
+        return opcode_inst + "0000000000000000000"
     
     else:
         print("Invalid syntax")
