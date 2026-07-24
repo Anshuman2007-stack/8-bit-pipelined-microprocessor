@@ -62,8 +62,8 @@ def convert_to_five_bit_binary (reg):           #NO OF VALS FOR REGS = 32
 
 def convert_to_nine_bit_binary(num):      
     num = int(num)
-    if not (-64 <= num <= 63):
-        raise ValueError("Immediate out of range: must be between -64 and 63 inclusive")
+    if not (-128 <= num <= 127):
+        raise ValueError("Immediate out of range: must be between -128 and 127 inclusive")
     
     # two's complement in 8 bits, then prepend 0 for the 9th padding bit
     return f"0{num & 0xFF:08b}"
