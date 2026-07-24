@@ -70,7 +70,15 @@ BNE / Branch if Not Equal (opcode 01110): BNE Rs Rt Immediate
 Format: opcode(5) rs(5) rt(5) immediate(1+8)
 BNE R1 R2 3      # if (R1 != R2), PC = PC + 3   (branch if not equal)
 
+JAL / Jump and Link (opcode 10000): JAL Rd Immediate
+Format: opcode(5) rs(5)(unused) rt(5) immediate(1+8)
+JAL R3 6         # Increment PC by 6, flush out two instructions and store (PC+1) of this instruction in R3
 
+JR / Jump Register (opcode 10001): JR Rs
+Format: opcode(5) rs(5) rt(unused) immediate(unused)
+JR R6            # Jump to instruction address stored in R6
+
+ERET/NORMAL/TRAP are Exception Handling instructions.
 
 It can also handle comments on separate lines like:
 #comment
@@ -78,6 +86,6 @@ which it ignores while giving the output.
 
 The assembler can handle only one instruction per line, if more than one is given it will display "Only one instruction per line".
 
-The assembler can also handle inline comments for instructions except in LOADI and JUMP instructions.
+The assembler can also handle inline comments for instructions except in LOADI,JUMP,JAL,JR,ERET,NORMAL and TRAP instructions.
 It also has inbuilt error handling - it throws a ValueError for invalid register values, "Invalid syntax" for instructions not the ones above and invalid 
 immediate for out of range immediate (between 63 and -64 is correct).
